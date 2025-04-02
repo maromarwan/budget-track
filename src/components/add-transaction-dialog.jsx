@@ -30,14 +30,11 @@ const categories = [
   { label: "Housing", value: "housing" },
   { label: "Transportation", value: "transportation" },
   { label: "Food", value: "food" },
-  { label: "Utilities", value: "utilities" },
   { label: "Entertainment", value: "entertainment" },
   { label: "Shopping", value: "shopping" },
   { label: "Healthcare", value: "healthcare" },
-  { label: "Personal", value: "personal" },
   { label: "Education", value: "education" },
-  { label: "Gifts", value: "gifts" },
-  { label: "Income", value: "income" },
+  { label: "Salary", value: "salary" },
   { label: "Other", value: "other" },
 ]
 
