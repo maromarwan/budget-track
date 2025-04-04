@@ -24,6 +24,9 @@ export default function DashboardPage() {
   const {transactions} = useTransactions()
   console.log(transactions);
   
+
+
+  
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex-1 space-y-6 p-6 md:p-8">

@@ -36,20 +36,20 @@ export function RecentTransactions() {
 
   return (
     <div className="space-y-4">
-      {transactions.map((transaction,index) => {
+      {transactions.map((transaction) => {
         const { icon: Icon, color, bg } = iconMap[transaction.category] || {};
 
         return (
-          <div key={index} className="flex items-center gap-4">
+          <div key={transaction.id} className="flex items-center gap-4">
             <div className={`p-2 rounded-full ${bg}`}>
               {Icon && <Icon className={`h-4 w-4 ${color}`} />}
             </div>
             <div className="flex-1 space-y-1">
               <p className="text-sm font-medium leading-none">{transaction.description}</p>
-              <p className="text-xs text-muted-foreground">{format(transaction.date, "MMM d")}</p>
+              <p className="text-xs text-muted-foreground">{format(new Date(transaction.date.toDate(), "MMM d"))}</p>
             </div>
-            <div className={`text-sm font-medium ${transaction.amount > 0 ? "text-emerald-500" : "text-rose-500"}`}>
-              {transaction.amount > 0 ? "+" : ""}
+            <div className={`text-sm font-medium ${transaction.type == 'income' ? "text-emerald-500" : "text-rose-500"}`}>
+              {transaction.type == 'income' ? "+" : "-"}
               {Number(transaction.amount).toFixed(2)}
             </div>
           </div>
