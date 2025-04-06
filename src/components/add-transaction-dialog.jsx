@@ -62,6 +62,7 @@ export function AddTransactionDialog() {
       category : category,
       date : date
     })
+    // addTransaction()
     setOpen(false)
   }
 

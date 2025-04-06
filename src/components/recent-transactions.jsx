@@ -1,15 +1,5 @@
-import { useState } from "react";
-import { format } from "date-fns";
 import { Home, Car, Utensils, Film, ShoppingCart, Heart, Book, ArrowUp, DollarSign, FileText } from 'lucide-react';
-
-
-import {
-  ArrowUpIcon,
-  CreditCardIcon,
-  HomeIcon,
-  ShoppingBagIcon,
-  UtensilsIcon,
-} from "lucide-react";
+import { format } from "date-fns"
 import { useTransactions } from "@/context/TransactionContext";
 
 const iconMap = {
@@ -26,16 +16,9 @@ const iconMap = {
 
 export function RecentTransactions() {
   const {transactions} = useTransactions();
-  // const [transactions, setTransactions] = useState([
-  //   { id: "1", description: "Grocery Store", amount: -85.32, date: "Today", category: "grocery" },
-  //   { id: "2", description: "Monthly Salary", amount: 3452.0, date: "Yesterday", category: "salary" },
-  //   { id: "3", description: "Restaurant Bill", amount: -42.5, date: "Yesterday", category: "restaurant" },
-  //   { id: "4", description: "Rent Payment", amount: -850.0, date: "Mar 1", category: "rent" },
-  //   { id: "5", description: "Online Shopping", amount: -124.99, date: "Feb 28", category: "shopping" },
-  // ]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-h-[330px] overflow-y-auto">
       {transactions.map((transaction) => {
         const { icon: Icon, color, bg } = iconMap[transaction.category] || {};
 
@@ -46,10 +29,9 @@ export function RecentTransactions() {
             </div>
             <div className="flex-1 space-y-1">
               <p className="text-sm font-medium leading-none">{transaction.description}</p>
-              <p className="text-xs text-muted-foreground">{format(new Date(transaction.date.toDate(), "MMM d"))}</p>
+              <p className="text-xs text-muted-foreground">{format(transaction.date.toDate(), "PPP")}</p>
             </div>
             <div className={`text-sm font-medium ${transaction.type == 'income' ? "text-emerald-500" : "text-rose-500"}`}>
-              {transaction.type == 'income' ? "+" : "-"}
               {Number(transaction.amount).toFixed(2)}
             </div>
           </div>

@@ -1,23 +1,42 @@
 "use client"
 
+import { useTransactions } from "@/context/TransactionContext"
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts"
 
-const data = [
-  { name: "Housing", value: 850, color: "#3b82f6" },
-  { name: "Food", value: 290, color: "#10b981" },
-  { name: "Transportation", value: 175, color: "#f59e0b" },
-  { name: "Entertainment", value: 175, color: "#8b5cf6" },
-  { name: "Shopping", value: 320, color: "#ec4899" },
-  { name: "Other", value: 150, color: "#6b7280" },
-]
+const categoryColors = {
+  housing: "#3b82f6",
+  food: "#10b981",
+  education: "#f59e0b",
+  salary: "#8b5cf6",
+  shopping: "#ec4899",
+  other: "#6b7280",
+}
 
 export function CategoryBreakdown() {
+  const { transactions } = useTransactions()
+
+  // Filter only expenses and group by category
+  const categoryMap= {}
+
+  transactions.forEach((t) => {
+    if (t.type === "expense") {
+      const category = t.category || "other"
+      categoryMap[category] = (categoryMap[category] || 0) + Math.abs(t.amount)
+    }
+  })
+
+  const chartData = Object.entries(categoryMap).map(([name, value]) => ({
+    name,
+    value,
+    color: categoryColors[name] || "#9ca3af", // fallback gray
+  }))
+
   return (
     <div className="h-[300px] w-full">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
-            data={data}
+            data={chartData}
             cx="50%"
             cy="50%"
             innerRadius={60}
@@ -27,7 +46,7 @@ export function CategoryBreakdown() {
             label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
             labelLine={false}
           >
-            {data.map((entry, index) => (
+            {chartData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.color} />
             ))}
           </Pie>
@@ -35,7 +54,8 @@ export function CategoryBreakdown() {
             formatter={(value) => [`$${value}`, "Amount"]}
             contentStyle={{
               borderRadius: "6px",
-              boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+              boxShadow:
+                "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
             }}
           />
         </PieChart>
@@ -43,4 +63,3 @@ export function CategoryBreakdown() {
     </div>
   )
 }
-

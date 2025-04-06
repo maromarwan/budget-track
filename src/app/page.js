@@ -2,29 +2,39 @@
 import {
   ArrowDownIcon,
   ArrowUpIcon,
-  BarChart3Icon,
-  CreditCardIcon,
   DollarSignIcon,
-  HomeIcon,
-  LayersIcon,
   PieChartIcon,
-  UsersIcon,
+  PlusCircle,
+  PlusIcon,
 } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ExpenseChart } from "@/components/expense-chart"
 import { RecentTransactions } from "@/components/recent-transactions"
 import { CategoryBreakdown } from "@/components/category-breakdown"
 import { useTransactions } from "@/context/TransactionContext"
+import Budget_status from "@/components/budget-status"
+import { Button } from "@/components/ui/button"
+import { AddBudgetDialog } from "@/components/add-budget-dialog"
 
 export default function DashboardPage() {
   const {transactions} = useTransactions()
-  console.log(transactions);
+  // console.log(transactions[0].date.toDate());
   
 
+  const totalIncome = transactions
+  .filter(t => t.type === "income")
+  .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalExpense = transactions
+  .filter(t => t.type === "expense")
+  .reduce((sum, t) => sum + t.amount, 0);
+
+  const savings = totalIncome - totalExpense;
+
+  const savingsRate = totalIncome > 0 ? (savings / totalIncome) * 100 : 0;
+  
 
   
   return (
@@ -56,7 +66,7 @@ export default function DashboardPage() {
                   <ArrowUpIcon className="h-4 w-4 text-emerald-500" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">$3,452.00</div>
+                  <div className="text-2xl font-bold">${totalIncome}</div>
                   <p className="text-xs text-muted-foreground">+8.2% from last month</p>
                 </CardContent>
               </Card>
@@ -66,7 +76,7 @@ export default function DashboardPage() {
                   <ArrowDownIcon className="h-4 w-4 text-rose-500" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">$1,789.34</div>
+                  <div className="text-2xl font-bold">${totalExpense}</div>
                   <p className="text-xs text-muted-foreground">+12.3% from last month</p>
                 </CardContent>
               </Card>
@@ -76,7 +86,7 @@ export default function DashboardPage() {
                   <PieChartIcon className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">48.2%</div>
+                  <div className="text-2xl font-bold">{savingsRate.toFixed(2)}%</div>
                   <p className="text-xs text-muted-foreground">+2.5% from last month</p>
                 </CardContent>
               </Card>
@@ -88,13 +98,15 @@ export default function DashboardPage() {
                   <CardTitle>Monthly Overview</CardTitle>
                 </CardHeader>
                 <CardContent className="pl-2">
-                  <ExpenseChart />
+                {transactions.length === 0 ? (
+          <p className="text-muted-foreground flex justify-center">No Data yet.</p>
+          ) : (<ExpenseChart />)}
                 </CardContent>
               </Card>
               <Card className="md:col-span-3 col-span-4">
                 <CardHeader>
                   <CardTitle>Recent Transactions</CardTitle>
-                  <CardDescription>You made 12 transactions this month.</CardDescription>
+                  <CardDescription>You made {transactions.length} transactions this month.</CardDescription>
                 </CardHeader>
                 <CardContent>
                 {transactions.length === 0 ? (
@@ -116,60 +128,16 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
               <Card className="col-span-4">
-                <CardHeader>
+                <CardHeader className="flex justify-between">
+                  <div>
                   <CardTitle>Budget Status</CardTitle>
                   <CardDescription>Your budget progress for this month.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <HomeIcon className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm font-medium">Housing</span>
-                        </div>
-                        <div className="text-sm">$850 / $1,000</div>
-                      </div>
-                      <Progress value={85} className="h-2" />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <CreditCardIcon className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm font-medium">Shopping</span>
-                        </div>
-                        <div className="text-sm">$320 / $400</div>
-                      </div>
-                      <Progress value={80} className="h-2" />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <UsersIcon className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm font-medium">Entertainment</span>
-                        </div>
-                        <div className="text-sm">$175 / $200</div>
-                      </div>
-                      <Progress value={87.5} className="h-2" />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <LayersIcon className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm font-medium">Groceries</span>
-                        </div>
-                        <div className="text-sm">$290 / $350</div>
-                      </div>
-                      <Progress value={83} className="h-2" />
-                    </div>
                   </div>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="outline" className="w-full">
-                    <BarChart3Icon className="mr-2 h-4 w-4" />
-                    View All Budgets
-                  </Button>
-                </CardFooter>
+                  <AddBudgetDialog/>
+                </CardHeader>
+
+                <Budget_status/>
+                
               </Card>
             </div>
           </TabsContent>
@@ -187,6 +155,7 @@ export default function DashboardPage() {
                   </div>
                 </CardContent>
               </Card>
+
               <Card className="col-span-3">
                 <CardHeader>
                   <CardTitle>Savings Growth</CardTitle>
