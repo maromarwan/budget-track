@@ -55,13 +55,20 @@ export function AddTransactionDialog() {
     e.preventDefault()
     // Here you would handle the form submission
     // For example, send the data to your API
-    addTransaction({
-      type : type,
-      amount: amount.current.value,
-      description: description.current.value,
-      category : category,
-      date : date
-    })
+      // Convert amount to a number
+    let parsedAmount = parseFloat(amount.current.value);
+  
+    // Make amount negative if it's an expense
+    if (type === "expense" && parsedAmount > 0) {
+    parsedAmount = -parsedAmount;
+  }
+    addTransaction(
+      parsedAmount,
+      category,
+      date,
+      description.current.value,
+      type
+    )
     // addTransaction()
     setOpen(false)
   }

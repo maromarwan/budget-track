@@ -5,16 +5,20 @@ const TransactionContext = createContext();
 
 import { addDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "@/firebase/firebase"
+import { getAuth } from "firebase/auth";
 
 export function TransactionProvider({ children }) {
   const [transactions, setTransactions] = useState([]);
   const [budgets, setBudgets] = useState([]);
+  const auth = getAuth();
+  const user = auth.currentUser;
 
   // const addTransaction = (transaction) => {
   //   setTransactions((prev) => [...prev, transaction]);
   // };
     const readTransaction = async () => {
-      const querySnapshot = await getDocs(collection(db, "transaction"));
+      if (!user) return[];  
+      const querySnapshot = await getDocs(collection(db,"users", user.uid, "transaction"));
       const transaction = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setTransactions(transaction);
     };
@@ -23,7 +27,8 @@ export function TransactionProvider({ children }) {
   },[])
 
   const addTransaction = async (amount,category,date,description,type) => {
-    await addDoc(collection(db, "transaction"), {
+    if (!user) return;    
+    await addDoc(collection(db,"users", user.uid, "transaction"), {
       amount: amount,
       category: category,
       date: date,
@@ -35,13 +40,14 @@ export function TransactionProvider({ children }) {
 
     // ✅ Define reusable fetch function
     const fetchBudgets = async () => {
-      const snapshot = await getDocs(collection(db, "budgets"))
+      if (!user) return;
+      const snapshot = await getDocs(collection(db, "users", user.uid, "budgets"))
       const limits = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
       setBudgets(limits)
     }
 
   return (
-    <TransactionContext.Provider value={{ transactions, addTransaction, fetchBudgets, budgets }}>
+    <TransactionContext.Provider value={{ transactions, addTransaction, fetchBudgets, budgets, readTransaction }}>
       {children}
     </TransactionContext.Provider>
   );

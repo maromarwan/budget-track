@@ -1,14 +1,8 @@
 "use client"
 import {
   BarChart3Icon,
-  CreditCardIcon,
-  Edit,
-  Edit2,
-  Edit3,
   HomeIcon,
-  LayersIcon,
   Trash,
-  UsersIcon,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -42,6 +36,7 @@ function Budget_status() {
       
         const expenseData = transactions.filter(tx => tx.amount < 0);
         setExpenses(expenseData);
+        console.log(expenses);
       }, [transactions]);
       
       //delete budget

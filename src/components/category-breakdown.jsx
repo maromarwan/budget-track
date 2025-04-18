@@ -9,6 +9,8 @@ const categoryColors = {
   education: "#f59e0b",
   salary: "#8b5cf6",
   shopping: "#ec4899",
+  healthcare: "#3b82f6",
+  transportation: "#00b911",
   other: "#6b7280",
 }
 

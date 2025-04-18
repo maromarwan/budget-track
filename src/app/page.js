@@ -4,8 +4,6 @@ import {
   ArrowUpIcon,
   DollarSignIcon,
   PieChartIcon,
-  PlusCircle,
-  PlusIcon,
 } from "lucide-react"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -15,12 +13,28 @@ import { RecentTransactions } from "@/components/recent-transactions"
 import { CategoryBreakdown } from "@/components/category-breakdown"
 import { useTransactions } from "@/context/TransactionContext"
 import Budget_status from "@/components/budget-status"
-import { Button } from "@/components/ui/button"
 import { AddBudgetDialog } from "@/components/add-budget-dialog"
+import { useAuth } from "@/context/AuthContext"
+import { useRouter } from "next/navigation"
+import { toast } from "react-toastify";
+import { useEffect } from "react"
+import { getAuth } from "firebase/auth"
+
 
 export default function DashboardPage() {
-  const {transactions} = useTransactions()
-  // console.log(transactions[0].date.toDate());
+  const {transactions, readTransaction} = useTransactions()
+  
+  const router = useRouter();
+  const { user } = useAuth();
+useEffect(()=>{
+  if (user === undefined) return; // wait until Firebase finishes checking auth state
+  if (!user) {    
+    toast.error("You must log in to access the dashboard.");
+    router.push("/Login");
+  }else{
+    readTransaction()
+  }
+},[user])
   
 
   const totalIncome = transactions
@@ -29,19 +43,16 @@ export default function DashboardPage() {
 
   const totalExpense = transactions
   .filter(t => t.type === "expense")
-  .reduce((sum, t) => sum + t.amount, 0);
+  .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
   const savings = totalIncome - totalExpense;
-
   const savingsRate = totalIncome > 0 ? (savings / totalIncome) * 100 : 0;
-  
 
-  
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex-1 space-y-6 p-6 md:p-8">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-
+      
         <Tabs defaultValue="overview" className="space-y-6 w-full">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
