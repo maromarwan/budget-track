@@ -16,7 +16,7 @@ export function TransactionProvider({ children }) {
   // const addTransaction = (transaction) => {
   //   setTransactions((prev) => [...prev, transaction]);
   // };
-    const readTransaction = async () => {
+    const readTransaction = async (user) => {
       if (!user) return[];  
       const querySnapshot = await getDocs(collection(db,"users", user.uid, "transaction"));
       const transaction = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -35,11 +35,11 @@ export function TransactionProvider({ children }) {
       description: description,
       type: type
     });
-    readTransaction()
+    readTransaction(user)
   };
 
     // ✅ Define reusable fetch function
-    const fetchBudgets = async () => {
+    const fetchBudgets = async (user) => {
       if (!user) return;
       const snapshot = await getDocs(collection(db, "users", user.uid, "budgets"))
       const limits = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))

@@ -13,15 +13,19 @@ import { useTransactions } from "@/context/TransactionContext"
 import { collection, getDocs } from "firebase/firestore"
 import { db } from "@/firebase/firebase"
 import { deleteBudget } from "@/lib/budget-utils"
+import { getAuth } from "firebase/auth";
+
 
 function Budget_status() {
     const [expenses, setExpenses] = useState([]);
     const {transactions,fetchBudgets,budgets} = useTransactions()
+      const auth = getAuth();
+      const user = auth.currentUser;
 
 
 
   useEffect(() => {
-    fetchBudgets()
+    fetchBudgets(user)
               // Fetch transactions from 'transactions' collection
               const fetchExpenses = () => {
                 const expenseData = transactions.filter(tx => tx.amount < 0)
@@ -42,9 +46,9 @@ function Budget_status() {
       //delete budget
       const handleDelete = async (id) => {
         if (confirm("Are you sure you want to delete this budget?")) {
-          await deleteBudget(id)
+          await deleteBudget(id, user)
           // Optional: refresh budgets from Firestore
-          fetchBudgets();
+          fetchBudgets(user);
         }
       }
   return (

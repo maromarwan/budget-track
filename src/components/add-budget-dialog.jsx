@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/select"
 import { useTransactions } from "@/context/TransactionContext"
 import { addBudget } from "@/lib/budget-utils"
+import { getAuth } from "firebase/auth";
+
 
 const categories = [
   { label: "Housing", value: "housing" },
@@ -39,14 +41,17 @@ export function AddBudgetDialog({ onAdd }) {
   const [limit, setLimit] = useState("")
   const {fetchBudgets} = useTransactions()
 
+  const auth = getAuth();
+  const user = auth.currentUser;
+
   const handleSubmit = async () => {
     if (!category || !limit) return
-    await addBudget(category, limit)
+    await addBudget(category, limit, user)
     setCategory("")
     setLimit("")
     setOpen(false)
     if (onAdd) onAdd()
-    fetchBudgets()
+    fetchBudgets(user)
   }
 
   return (

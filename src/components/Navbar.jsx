@@ -3,6 +3,8 @@ import { AddTransactionDialog } from "@/components/add-transaction-dialog"
 import { Button } from './ui/button'
 import Link from 'next/link'
 import { DollarSignIcon, SettingsIcon } from 'lucide-react'
+import { logoutUser } from '@/firebase/authService'
+
 
 
 function Navbar() {
@@ -33,6 +35,11 @@ function Navbar() {
               <SettingsIcon className="h-4 w-4" />
               <span className="sr-only">Settings</span>
             </Button>
+            <button
+         onClick={()=>{logoutUser}}
+         className="w-full flex items-center justify-center gap-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 font-semibold py-2 transition-all duration-300 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-red-300">
+         Logout
+        </button>
             <AddTransactionDialog />
           </div>
         </div>

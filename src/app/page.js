@@ -32,7 +32,7 @@ useEffect(()=>{
     toast.error("You must log in to access the dashboard.");
     router.push("/Login");
   }else{
-    readTransaction()
+    readTransaction(user)
   }
 },[user])
   

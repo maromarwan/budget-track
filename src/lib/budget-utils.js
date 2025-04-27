@@ -1,9 +1,9 @@
 import { db } from "@/firebase/firebase"; // ✅ use import, not require
 import { collection, addDoc, doc, deleteDoc, updateDoc } from "firebase/firestore";
 
-  export const addBudget = async (category, limit) => {
+  export const addBudget = async (category, limit, user) => {
     try {
-      await addDoc(collection(db, "budgets"), {
+      await addDoc(collection(db,"users", user.uid, "budgets"), {
         category,
         limit: parseFloat(limit),
       });
@@ -13,7 +13,7 @@ import { collection, addDoc, doc, deleteDoc, updateDoc } from "firebase/firestor
   };
   
   // Delete budget by ID
-  export const deleteBudget = async (id) => {
-    const ref = doc(db, "budgets", id)
+  export const deleteBudget = async (id, user) => {
+    const ref = doc(db,"users", user.uid, "budgets", id)
     await deleteDoc(ref)
   }
